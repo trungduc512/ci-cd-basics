@@ -28,9 +28,9 @@ describe('Kiểm tra API Endpoints', () => {
     assert.ok(data.environment);
 
     // BƯỚC 1 (ĐỂ PIPELINE ĐỎ): Hãy comment dòng 'UP' bên dưới và mở comment dòng 'DOWN' ra để cố tình làm lỗi
-    assert.strictEqual(data.status, 'DOWN');
+    // assert.strictEqual(data.status, 'DOWN');
 
     // BƯỚC 2 (ĐỂ PIPELINE XANH): Giữ nguyên dòng dưới để pass bài
-    // assert.strictEqual(data.status, 'UP');
+    assert.strictEqual(data.status, 'UP');
   });
 });
