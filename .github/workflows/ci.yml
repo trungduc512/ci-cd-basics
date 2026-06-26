@@ -63,3 +63,6 @@ jobs:
     with:
       image_name: demo-app
       image_tag: sha-${{ github.sha }}
+    secrets:
+      registry_password: ${{ secrets.GITHUB_TOKEN }}
+    
