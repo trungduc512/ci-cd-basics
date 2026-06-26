@@ -12,6 +12,7 @@ permissions:
   packages: write
 
 jobs:
+  # Kiểm tra chất lượng code bằng ESLint trước khi chạy test.
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -29,6 +30,7 @@ jobs:
       - run: npm install
       - run: npm run lint
 
+  # Chạy test ma trận trên nhiều phiên bản Node.js và Ubuntu để đảm bảo tương thích.
   test:
     needs: lint
     runs-on: ${{ matrix.os }}
@@ -53,7 +55,7 @@ jobs:
       - run: npm install
       - run: npm test
 
-  # Job build test, quét bảo mật cục bộ vẫn giữ lại để verify code trước khi trigger CD
+  # Build image local để scan bảo mật và tạo SBOM trước khi sang CD.
   security-build:
     needs: test
     runs-on: ubuntu-latest
