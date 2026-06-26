@@ -9,6 +9,9 @@ on:
       image_tag:
         required: true
         type: string
+    secrets:
+      registry_password:
+        required: true
 
 
 jobs:
