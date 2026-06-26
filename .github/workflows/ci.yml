@@ -32,7 +32,6 @@ jobs:
 
   # Chạy test ma trận trên nhiều phiên bản Node.js và Ubuntu để đảm bảo tương thích.
   test:
-    needs: lint
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -63,4 +62,6 @@ jobs:
     with:
       image_name: demo-app
       image_tag: sha-${{ github.sha }}
+    secrets:
+      registry_password: ${{ secrets.GITHUB_TOKEN }}
     
