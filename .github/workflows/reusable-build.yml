@@ -9,9 +9,7 @@ on:
       image_tag:
         required: true
         type: string
-    secrets:
-      registry_password:
-        required: true
+
 
 jobs:
   # Reusable job để build, push image lên GHCR và scan bảo mật sau build.
@@ -31,26 +29,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.registry_password }}
 
-      - name: Build and Push Image
+      # Build image
+      - name: Build image
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
+          load: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      # Scan image with Trivy for security vulnerabilities
-      - name: Scan image with Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
-          format: table
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: os,library
-          severity: CRITICAL,HIGH
 
       # Generate SBOM with Syft    
       - name: Generate SBOM with Syft
@@ -65,3 +53,23 @@ jobs:
         with:
           name: sbom-spdx-json
           path: sbom.spdx.json
+
+      # Scan image with Trivy for security vulnerabilities
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
+
+      # Push image to GHCR
+      - name: Push image to GHCR
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
