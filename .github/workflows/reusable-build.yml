@@ -41,6 +41,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # Scan image with Trivy for security vulnerabilities
       - name: Scan image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
@@ -50,3 +51,17 @@ jobs:
           ignore-unfixed: true
           vuln-type: os,library
           severity: CRITICAL,HIGH
+
+      # Generate SBOM with Syft    
+      - name: Generate SBOM with Syft
+        uses: anchore/sbom-action@v0
+        with:
+          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
+          format: spdx-json
+          output-file: sbom.spdx.json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-spdx-json
+          path: sbom.spdx.json
